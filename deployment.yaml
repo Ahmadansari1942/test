@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      # tell aws for access s3/ssm
+      serviceAccountName: my-app-service-account
+      containers:
+      - name: hello-world-container
+        image: your-docker-hub-or-ecr-username/hello-world-app:latest
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"  # AWS region
