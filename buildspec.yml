@@ -4,10 +4,11 @@ phases:
   pre_build:
     commands:
     
-      - echo Installing kubectl...
-      - curl -O https://amazonaws.com
-      - chmod +x ./kubectl
-      - mv ./kubectl /usr/local/bin/kubectl
+      - echo Installing kubectl natively...
+      - sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+      - curl -fsSL https://k8s.io | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      - echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://k8s.io /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+      - sudo apt-get update && sudo apt-get install -y kubectl
       
       # 1. Docker Hub login
       - echo Logging in to Docker Hub...
