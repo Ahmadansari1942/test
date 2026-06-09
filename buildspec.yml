@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      # 1. Docker Hub login
+      - echo Logging in to Docker Hub...
+      - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+  
+  build:
+    commands:
+      # 2. Docker image build 
+      - echo Build started on `date`
+      - docker build -t ahmadansari19/hello-world-app:latest .
+  
+  post_build:
+    commands:
+      # 3. image push docker
+      - echo Pushing the Docker image...
+      - docker push ahmadansari19/hello-world-app:latest
+      
+      # 4. EKS cluster connect (Kubeconfig update)
+      - echo Connecting to EKS Cluster...
+      - aws eks update-kubeconfig --name free-secure-cluster --region us-east-1
+      
+      # 5. New docker version deploy cluster
+      - echo Deploying to EKS...
+      - kubectl apply -f deployment.yaml
