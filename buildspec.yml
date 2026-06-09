@@ -3,33 +3,27 @@ version: 0.2
 phases:
   pre_build:
     commands:
-    
-      - echo Installing kubectl natively...
-      - sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gpg
-      - curl -fsSL https://k8s.io | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-      - echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://k8s.io /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-      - sudo apt-get update && sudo apt-get install -y kubectl
+      # 1. Simple direct stable binary download karna (No repo jhanjhat)
+      - echo Installing kubectl binary directly...
+      - curl -LO "https://k8s.io"
+      - chmod +x ./kubectl
+      - sudo mv ./kubectl /usr/local/bin/kubectl
+      - kubectl version --client
       
-      # 1. Docker Hub login
+      # 2. Docker Hub login
       - echo Logging in to Docker Hub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
   
   build:
     commands:
-      # 2. Docker image build 
       - echo Build started on `date`
       - docker build -t ahmadansari19/hello-world-app:latest .
   
   post_build:
     commands:
-      # 3. image push docker
       - echo Pushing the Docker image...
       - docker push ahmadansari19/hello-world-app:latest
-      
-      # 4. EKS cluster connect (Kubeconfig update)
       - echo Connecting to EKS Cluster...
       - aws eks update-kubeconfig --name free-secure-cluster --region us-east-1
-      
-      # 5. New docker version deploy cluster
       - echo Deploying to EKS...
       - kubectl apply -f deployment.yaml
