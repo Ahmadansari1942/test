@@ -3,6 +3,12 @@ version: 0.2
 phases:
   pre_build:
     commands:
+    
+      - echo Installing kubectl...
+      - curl -O https://amazonaws.com
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+      
       # 1. Docker Hub login
       - echo Logging in to Docker Hub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
