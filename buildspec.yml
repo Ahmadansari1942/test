@@ -19,4 +19,4 @@ phases:
     commands:
       - docker push ahmadansari19/hello-world-app:latest
       - aws eks update-kubeconfig --name free-secure-cluster --region us-east-1
-      - kubectl apply -f deployment.yaml
+      - kubectl apply -f deployment.yaml --validate=false
