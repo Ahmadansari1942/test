@@ -3,7 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      # 1. Simple direct stable binary download karna (No repo jhanjhat)
+      # 1. Simple direct stable binary download 
       - echo Installing kubectl binary directly...
       - curl -LO "https://k8s.io"
       - chmod +x ./kubectl
