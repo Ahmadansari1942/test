@@ -2,29 +2,21 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 18
     commands:
-      # AWS CodeBuild standard environments install
-      - echo Installing kubectl via standard package manager...
-      - sudo apt-get update && sudo apt-get install -y kubernetes-client
+      - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
 
   pre_build:
     commands:
-      # Docker Hub login
-      - echo Logging in to Docker Hub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-  
+
   build:
     commands:
-      - echo Build started on `date`
       - docker build -t ahmadansari19/hello-world-app:latest .
-  
+
   post_build:
     commands:
-      - echo Pushing the Docker image...
       - docker push ahmadansari19/hello-world-app:latest
-      - echo Connecting to EKS Cluster...
       - aws eks update-kubeconfig --name free-secure-cluster --region us-east-1
-      - echo Deploying to EKS...
       - kubectl apply -f deployment.yaml
